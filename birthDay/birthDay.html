@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>윤우의 첫 번째 생일 초대장</title>
   <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap" rel="stylesheet" />
+  <!-- jQuery CDN 추가 -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <style>
     html, body {
       margin: 0;
@@ -19,11 +21,28 @@
       position: relative;
     }
 
+    /* 오버레이 스타일: 사용자 상호작용 받기 위한 클릭 영역 */
+    #overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      color: #fff;
+      font-size: 2em;
+      cursor: pointer;
+    }
+
     canvas {
       position: fixed;
       top: 0;
       left: 0;
-      z-index: 99;
+      z-index: 9999;
       pointer-events: none;
     }
 
@@ -33,54 +52,75 @@
       background: #fff;
       padding: 30px 20px;
       border-radius: 20px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
       text-align: center;
       z-index: 1;
       position: relative;
     }
-
+    
     h1 {
       color: #f1916d;
       font-size: 2.2em;
       margin-bottom: 12px;
       font-weight: bold;
     }
-
+    
     h2 {
       color: #f67280;
       font-weight: 600;
       font-size: 1.4em;
       margin-bottom: 20px;
     }
-
+    
     p {
       font-size: 1.1em;
       line-height: 1.8;
       margin: 20px 0;
       color: #444;
     }
-
+    
     .highlight {
       color: #e85a71;
       font-weight: bold;
     }
-
+    
     .footer {
       margin-top: 30px;
       font-size: 0.95em;
       color: #666;
     }
-
+    
     a {
       color: #f67280;
       text-decoration: none;
       font-weight: 600;
     }
-
+    
     a:hover {
       text-decoration: underline;
     }
-
+    
+    /* 버튼 스타일 */
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      margin: 10px 5px;
+      background-color: #f67280;
+      color: #fff;
+      font-size: 1em;
+      font-weight: 600;
+      border-radius: 25px;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      cursor: pointer;
+      border: none;
+    }
+    
+    .btn:hover {
+      background-color: #e85a71;
+    }
+    
     .slider {
       position: relative;
       width: 100%;
@@ -89,80 +129,57 @@
       margin: 20px 0;
       border-radius: 15px;
     }
-
+    
     .slides {
       display: flex;
       transition: transform 0.5s ease-in-out;
       height: 100%;
     }
-
+    
     .slides img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       flex-shrink: 0;
     }
-
+    
     @media (max-width: 480px) {
       .invitation {
         padding: 20px 15px;
       }
-
       h1 {
         font-size: 1.6em;
       }
-
       h2 {
         font-size: 1.1em;
       }
-
       p {
         font-size: 1em;
       }
-
       .slider {
         height: 180px;
       }
     }
-
-    .btn {
-      display: inline-block;
-      padding: 10px 20px;
-      margin-top: 10px;
-      background-color: #f67280; /* 기존 테마 색상 */
-      color: #fff;
-      font-size: 1em;
-      font-weight: 600;
-      border-radius: 25px;
-      text-decoration: none;
-      transition: background-color 0.3s ease;
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .btn:hover {
-      background-color: #e85a71;
-    }
   </style>
 </head>
 <body>
+
   <canvas id="fireworks"></canvas>
 
   <div class="invitation">
     <h1>🎉 첫 번째 생일 초대장 🎉</h1>
     <h2>우리 아기 <span class="highlight">윤우</span>의 첫 번째 생일에 초대합니다</h2>
-
     <p>
       사랑하는 가족과 이웃의 따뜻한 축복 속에서,<br />
       어느덧 윤우가 태어난 지 1년이 되었습니다.<br /><br />
       <span style="color:#e85a71; font-weight:600;">
         처음 웃고, 처음 걸음마를 떼던 순간들처럼<br />
-        이 특별한 날도 여러분과 함께 나누고자 <br>
+        이 특별한 날도 여러분과 함께 나누고자<br>
         소중한 분들에게 감사한 마음으로 초대장을 보냅니다.
       </span><br /><br />
       바쁘시더라도 귀한 걸음 하시어<br />
       소중한 첫 생일을 함께 축하해 주세요.
     </p>
-
     <div class="slider">
       <div class="slides" id="slides">
         <img src="assert/1.jpeg" />
@@ -175,45 +192,49 @@
         <img src="assert/8.jpeg" />
       </div>
     </div>
-
     <p>
       📅 <span class="highlight">2025년 4월 26일 (일)</span><br />
       🕒 <span class="highlight">오후 1시 40분</span><br />
-      📍 <span class="highlight"> 부산 서구 송도해변로 113 <br>
-        페어필드 바이 메리어트 부산 송도키친</span>
+      📍 <span class="highlight">
+        부산 서구 송도해변로 113<br>
+        페어필드 바이 메리어트 부산 송도키친
+      </span>
     </p>
-
     <p class="footer">
       ※ 간단한 식사와 작은 이벤트가 준비되어 있습니다.<br />
-      오시는 길은 아래 버튼을 참고해주세요 😊<br />
+      오시는 길과 함께 배경음악을 즐겨주세요!<br />
       <a href="https://naver.me/F42MtEtN" target="_blank" class="btn">오시는 길 보기</a>
     </p>
   </div>
 
-  <!-- 🎠 슬라이더 -->
+  <!-- 배경음악 (빵빠래 스타일): autoplay는 제거 -->
+  <audio id="bgMusic">
+    <source src="assert/팡파르(빵빠레).02.wav" type="audio/mpeg">
+    브라우저가 오디오를 지원하지 않습니다.
+  </audio>
+
+  <!-- 슬라이더 JS (무한 슬라이드 구현) -->
   <script>
     const slides = document.getElementById("slides");
+    const slideItems = slides.children;
     const slideWidth = 100;
     let currentIndex = 1;
     let isTransitioning = false;
   
     // 복제: 마지막 슬라이드를 앞에, 첫 번째 슬라이드를 뒤에 추가
-    const slideItems = Array.from(slides.children);
-    const firstClone = slideItems[0].cloneNode(true);
-    const lastClone = slideItems[slideItems.length - 1].cloneNode(true);
-    slides.insertBefore(lastClone, slideItems[0]); // 앞에
-    slides.appendChild(firstClone); // 뒤에
+    const firstSlide = slideItems[0];
+    const lastSlide = slideItems[slideItems.length - 1];
+    const firstClone = firstSlide.cloneNode(true);
+    const lastClone = lastSlide.cloneNode(true);
+    slides.insertBefore(lastClone, firstSlide);
+    slides.appendChild(firstClone);
   
     const totalSlides = slides.children.length;
-  
-    // 초기 위치: 진짜 첫 번째 (index 1)
     slides.style.transform = `translateX(-${slideWidth * currentIndex}%)`;
   
     slides.addEventListener("transitionend", () => {
       isTransitioning = false;
-  
       if (currentIndex === totalSlides - 1) {
-        // 마지막 복제 → 진짜 첫 슬라이드
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
             slides.style.transition = "none";
@@ -225,9 +246,7 @@
           });
         });
       }
-  
       if (currentIndex === 0) {
-        // 앞 복제 → 진짜 마지막 슬라이드
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
             slides.style.transition = "none";
@@ -252,7 +271,7 @@
     setInterval(moveSlide, 3000);
   </script>
 
-  <!-- 🎆 폭죽 효과 -->
+  <!-- 폭죽 효과 JS -->
   <script>
     const canvas = document.getElementById("fireworks");
     const ctx = canvas.getContext("2d");
@@ -266,7 +285,6 @@
     window.addEventListener("resize", resizeCanvas);
     resizeCanvas();
   
-    // 🎨 다양한 색상 추가 (무지개+파스텔 느낌)
     const colors = [
       '#f67280', '#ffb6b9', '#f1916d', '#f8c291', '#ffeaa7',
       '#a29bfe', '#74b9ff', '#81ecec', '#55efc4', '#fab1a0',
@@ -301,19 +319,17 @@
           particles.splice(index, 1);
         }
       });
-  
       requestAnimationFrame(animate);
     }
   
-    // 🎆 폭죽 시작 함수 (3초 동안만)
     function startFireworks(duration = 3000) {
       fireworkInterval = setInterval(() => {
-        for (let i = 0; i < 6; i++) { // 동시에 6곳에서
+        for (let i = 0; i < 6; i++) {
           const x = Math.random() * canvas.width;
           const y = Math.random() * canvas.height * 0.5;
           createFirework(x, y, 120);
         }
-      }, 300); // 자주 터뜨리기
+      }, 300);
   
       setTimeout(() => {
         clearInterval(fireworkInterval);
@@ -321,7 +337,19 @@
     }
   
     animate();
-    startFireworks(3000); // 🔥 3초 동안만 팡팡!
+    startFireworks(3000);
+  </script>
+
+  <!-- 음악 재생 스크립트: $(document).ready() 내에서 재생 -->
+  <script>
+    $(document).ready(function() {
+      const bgMusic = document.getElementById("bgMusic");
+      bgMusic.play().then(() => {
+        console.log("음악 자동 재생됨");
+      }).catch((err) => {
+        console.error("오디오 재생 에러:", err);
+      });
+    });
   </script>
 </body>
 </html>
