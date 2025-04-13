@@ -23,7 +23,7 @@
       position: fixed;
       top: 0;
       left: 0;
-      z-index: 0;
+      z-index: 99;
       pointer-events: none;
     }
 
@@ -124,6 +124,24 @@
         height: 180px;
       }
     }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      margin-top: 10px;
+      background-color: #f67280; /* 기존 테마 색상 */
+      color: #fff;
+      font-size: 1em;
+      font-weight: 600;
+      border-radius: 25px;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn:hover {
+      background-color: #e85a71;
+    }
   </style>
 </head>
 <body>
@@ -167,29 +185,26 @@
 
     <p class="footer">
       ※ 간단한 식사와 작은 이벤트가 준비되어 있습니다.<br />
-      오시는 길은 아래 링크를 참고해주세요 😊<br />
-      <a href="https://naver.me/F42MtEtN" target="_blank">[오시는 길 보기]</a>
+      오시는 길은 아래 버튼을 참고해주세요 😊<br />
+      <a href="https://naver.me/F42MtEtN" target="_blank" class="btn">오시는 길 보기</a>
     </p>
   </div>
 
   <!-- 🎠 슬라이더 -->
   <script>
     const slides = document.getElementById("slides");
-    const slideItems = slides.children;
-    const totalSlides = slideItems.length;
-  
     const slideWidth = 100;
     let currentIndex = 1;
     let isTransitioning = false;
   
     // 복제: 마지막 슬라이드를 앞에, 첫 번째 슬라이드를 뒤에 추가
-    const firstSlide = slideItems[0];
-    const lastSlide = slideItems[slideItems.length - 1];
-    const firstClone = firstSlide.cloneNode(true);
-    const lastClone = lastSlide.cloneNode(true);
+    const slideItems = Array.from(slides.children);
+    const firstClone = slideItems[0].cloneNode(true);
+    const lastClone = slideItems[slideItems.length - 1].cloneNode(true);
+    slides.insertBefore(lastClone, slideItems[0]); // 앞에
+    slides.appendChild(firstClone); // 뒤에
   
-    slides.insertBefore(lastClone, firstSlide); // 앞에 추가
-    slides.appendChild(firstClone); // 뒤에 추가
+    const totalSlides = slides.children.length;
   
     // 초기 위치: 진짜 첫 번째 (index 1)
     slides.style.transform = `translateX(-${slideWidth * currentIndex}%)`;
@@ -197,22 +212,32 @@
     slides.addEventListener("transitionend", () => {
       isTransitioning = false;
   
-      if (currentIndex === totalSlides) {
-        // 맨 끝 복제본 → 진짜 첫 슬라이드
-        slides.style.transition = "none";
-        currentIndex = 1;
-        slides.style.transform = `translateX(-${slideWidth * currentIndex}%)`;
-        void slides.offsetWidth; // reflow
-        slides.style.transition = "transform 0.5s ease-in-out";
+      if (currentIndex === totalSlides - 1) {
+        // 마지막 복제 → 진짜 첫 슬라이드
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            slides.style.transition = "none";
+            currentIndex = 1;
+            slides.style.transform = `translateX(-${slideWidth * currentIndex}%)`;
+            requestAnimationFrame(() => {
+              slides.style.transition = "transform 0.5s ease-in-out";
+            });
+          });
+        });
       }
   
       if (currentIndex === 0) {
-        // 맨 앞 복제본 → 진짜 마지막 슬라이드
-        slides.style.transition = "none";
-        currentIndex = totalSlides - 1;
-        slides.style.transform = `translateX(-${slideWidth * currentIndex}%)`;
-        void slides.offsetWidth;
-        slides.style.transition = "transform 0.5s ease-in-out";
+        // 앞 복제 → 진짜 마지막 슬라이드
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            slides.style.transition = "none";
+            currentIndex = totalSlides - 2;
+            slides.style.transform = `translateX(-${slideWidth * currentIndex}%)`;
+            requestAnimationFrame(() => {
+              slides.style.transition = "transform 0.5s ease-in-out";
+            });
+          });
+        });
       }
     });
   
